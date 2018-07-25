@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Busy</string>
+    <string name="app_name">Busy 32-410</string>
     <string name="title_activity_settings">Ustawienia</string>
     <string name="title_activity_busplan">BusplanActivity</string>
     <string name="title_week">Tydzień</string>
