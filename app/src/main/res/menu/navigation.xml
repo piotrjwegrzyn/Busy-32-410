@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/week"
+        android:icon="@drawable/nav_week"
+        android:title="@string/title_week" />
+
+    <item
+        android:id="@+id/saturday"
+        android:icon="@drawable/nav_saturday"
+        android:title="@string/title_saturday" />
+
+    <item
+        android:id="@+id/sunday"
+        android:icon="@drawable/nav_sunday"
+        android:title="@string/title_sunday" />
+
+</menu>

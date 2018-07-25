@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Aktualizacje" />
+
+    <Preference
+        android:key="updateDB"
+        android:summary="Sprawdź aktualizacie bazy danych"
+        android:title="Uaktualnij dane" />
+
+    <Preference
+        android:enabled="false"
+        android:key="updateApp"
+        android:summary="Sprawdź aktualizacie aplikacji"
+        android:title="Uaktualnij aplikację" />
+
+    <PreferenceCategory android:title="Inne" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="darkmode"
+        android:summary="Potrzebny restart do wprowadzenia zmian"
+        android:title="Ciemny motyw" />
+
+    <PreferenceCategory android:title="Aplikacja" />
+
+    <Preference
+        android:enabled="false"
+        android:summary="Dowiedz się więcej"
+        android:title="O aplikacji" />
+
+    <Preference
+        android:enabled="true"
+        android:key="sendEmail"
+        android:summary="Napisz maila do twórcy"
+        android:title="Kontakt" />
+
+
+</PreferenceScreen>
