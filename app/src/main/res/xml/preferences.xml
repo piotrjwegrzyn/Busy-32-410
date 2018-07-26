@@ -9,7 +9,7 @@
         android:title="Uaktualnij dane" />
 
     <Preference
-        android:enabled="false"
+        android:enabled="true"
         android:key="updateApp"
         android:summary="Sprawdź aktualizacie aplikacji"
         android:title="Uaktualnij aplikację" />
@@ -22,12 +22,19 @@
         android:summary="Potrzebny restart do wprowadzenia zmian"
         android:title="Ciemny motyw" />
 
-    <PreferenceCategory android:title="Aplikacja" />
-
     <Preference
         android:enabled="false"
-        android:summary="Dowiedz się więcej"
-        android:title="O aplikacji" />
+        android:key="favourites"
+        android:summary="Zarządzaj ulubionymi trasami"
+        android:title="Ulubione" />
+
+    <PreferenceCategory android:title="Dodatkowe informacje" />
+
+    <Preference
+        android:enabled="true"
+        android:key="github"
+        android:summary="Ten projekt jest otwartoźródłowy"
+        android:title="Otwórz GitHub" />
 
     <Preference
         android:enabled="true"

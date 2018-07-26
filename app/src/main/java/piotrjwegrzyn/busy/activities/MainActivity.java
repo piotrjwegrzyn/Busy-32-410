@@ -19,6 +19,11 @@ import piotrjwegrzyn.busy.database.AppDatabase;
 
 public class MainActivity extends BaseActivity {
 
+    public static int MINIMAL_VERSION_OF_DB = 4;
+
+    BusListAdapter busAdapter;
+    RecyclerView mainList;
+    AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,24 +31,43 @@ public class MainActivity extends BaseActivity {
 
         if (getSharedPreferences("settings", MODE_PRIVATE).getInt("dbversion", 0) == 0) {
 
-            startActivity(new Intent(this, WelcomeActivity.class));
+            Intent a = new Intent(this, WelcomeActivity.class);
+            a.putExtra("title", "Pierwsze uruchomienie");
+            a.putExtra("text", "Witaj!\nAby aplikacja działała, należy pobrać dane.\nZrób to klikając w poniższy przycisk:");
+            startActivity(a);
 
             finish();
 
             return;
+        } else {
+            if (getSharedPreferences("settings", MODE_PRIVATE).getInt("dbversion", 0) < MINIMAL_VERSION_OF_DB) {
+                Intent a = new Intent(this, WelcomeActivity.class);
+                a.putExtra("title", "Nowa wersja aplikacji");
+                a.putExtra("text", "Witaj ponownie!\nMusimy pobrać nowe dane.\nZrób to klikając w poniższy przycisk:");
+                startActivity(a);
+
+                finish();
+
+                return;
+            }
         }
 
         setContentView(R.layout.activity_main);
 
         registerDbListener();
 
-        AppDatabase db = AppDatabase.getInstance(this);
-
-        RecyclerView mainList = findViewById(R.id.mainList);
-
-        mainList.setAdapter(new BusListAdapter(this, db.getDao().getFirmsName()));
+        onDatabaseChanged();
 
     }
+
+    @Override
+    void onDatabaseChanged() {
+        db = AppDatabase.getInstance(this);
+        mainList = findViewById(R.id.mainList);
+        busAdapter = new BusListAdapter(this, db.getDao().getFirmsName());
+        mainList.setAdapter(busAdapter);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -113,4 +137,5 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
+
 }

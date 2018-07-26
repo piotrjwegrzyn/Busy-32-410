@@ -12,11 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import piotrjwegrzyn.busy.R;
+import piotrjwegrzyn.busy.services.AppDownloaderService;
 import piotrjwegrzyn.busy.services.DBDownloaderService;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private BroadcastReceiver dbListener;
+    private BroadcastReceiver dbListener, appListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,6 +26,30 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (preferences.getBoolean("darkmode", false)) {
             setTheme(R.style.DarkTheme);
         }
+    }
+
+    public void registerAppListener() {
+
+        if (appListener != null) {
+            return;
+        }
+
+        appListener = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getBooleanExtra("success", false)) {
+                    if (intent.getBooleanExtra("newest", false)) {
+                        makeLongToast("Po pobraniu pliku, otwórz go i zainstaluj");
+                    } else {
+                        onDatabaseUpdateNoChanged();
+                    }
+                } else {
+                    onDatabaseUpdateFailed();
+                }
+            }
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(appListener, new IntentFilter(AppDownloaderService.ACTION_DOWNLOADER));
     }
 
     public void registerDbListener() {
@@ -58,8 +83,19 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public void unregisterAppListener() {
+        if (appListener != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(appListener);
+            appListener = null;
+        }
+    }
+
     public void makeToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    public void makeLongToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
     void onDatabaseUpdateFailed() {
@@ -78,5 +114,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterDbListener();
+        unregisterAppListener();
     }
 }

@@ -7,13 +7,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import piotrjwegrzyn.busy.services.DBDownloaderService;
 import piotrjwegrzyn.busy.R;
+import piotrjwegrzyn.busy.services.DBDownloaderService;
 
 public class WelcomeActivity extends BaseActivity {
 
     Button dbButton;
-    TextView dbTextView;
+    TextView dbTextView, dbInfo;
 
     @Override
     void onDatabaseChanged() {
@@ -34,10 +34,12 @@ public class WelcomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        setTitle("Pierwsze uruchomienie");
+        setTitle(getIntent().getStringExtra("title"));
 
         dbButton = findViewById(R.id.dbButton);
         dbTextView = findViewById(R.id.dbTextView);
+        dbInfo = findViewById(R.id.dbInfo);
+        dbInfo.setText(getIntent().getStringExtra("text"));
 
         registerDbListener();
 

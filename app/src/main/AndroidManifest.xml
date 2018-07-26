@@ -24,7 +24,9 @@
             android:name=".services.DBDownloaderService"
             android:exported="false" />
 
-        <activity android:name=".activities.WelcomeActivity" />
+        <activity
+            android:name=".activities.WelcomeActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -32,7 +34,11 @@
         <activity
             android:name=".activities.BusplanActivity"
             android:label="@string/title_activity_busplan" />
-        <activity android:name=".activities.BusinfoActivity"></activity>
+        <activity android:name=".activities.BusinfoActivity" />
+
+        <service
+            android:name=".services.AppDownloaderService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

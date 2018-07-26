@@ -8,11 +8,12 @@
     tools:context=".activities.WelcomeActivity">
 
     <TextView
+        android:id="@+id/dbInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:gravity="center"
-        android:text="Witaj!\nAby aplikacja działała, należy pobrać dane.\nZrób to klikając w poniższy przycisk:"
+        tools:text="Witaj!\nAby aplikacja działała, należy pobrać dane.\nZrób to klikając w poniższy przycisk:"
         android:textSize="18sp" />
 
     <Button

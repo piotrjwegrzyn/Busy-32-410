@@ -20,6 +20,7 @@ import piotrjwegrzyn.busy.database.AppDatabase;
 public class DBDownloaderService extends IntentService {
 
     public static final String ACTION_DOWNLOADER = "downloader";
+    public static final String FILE_ADRESS = "http://www.piotrjwegrzyn.droppages.com/busyAppDB.db";
 
     public DBDownloaderService() {
         super("DBDownloaderService");
@@ -75,7 +76,7 @@ public class DBDownloaderService extends IntentService {
     }
 
     private void downloadDB() throws Exception {
-        URLConnection connection = new URL("http://www.piotrjwegrzyn.droppages.com/busyAppDB.db").openConnection();
+        URLConnection connection = new URL(FILE_ADRESS).openConnection();
         int length = connection.getContentLength();
 
         AppDatabase.getInstance(this).close();
@@ -93,12 +94,6 @@ public class DBDownloaderService extends IntentService {
                 length -= read;
             }
         }
-
-
-        /*URL website = new URL("http://www.piotrjwegrzyn.droppages.com/busy.db");
-        ReadableByteChannel rbc = Channels.newChannel(website.openStream());
-        FileOutputStream fos = new FileOutputStream(getApplicationInfo().dataDir + "/busyAppDB.db");
-        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);*/
     }
 
     private void sendBackBroadcast(boolean success, boolean changed) {

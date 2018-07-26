@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import java.util.Objects;
 
 import piotrjwegrzyn.busy.R;
+import piotrjwegrzyn.busy.services.AppDownloaderService;
 import piotrjwegrzyn.busy.services.DBDownloaderService;
 
 public class SettingsActivity extends BaseActivity {
@@ -24,13 +25,14 @@ public class SettingsActivity extends BaseActivity {
                 .commit();
 
         registerDbListener();
+        registerAppListener();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     void onDatabaseUpdateFailed() {
-        makeToast("Nie udało się pobrać danych");
+        makeToast("Nie udało się zsynchronizować");
     }
 
     @Override
@@ -40,7 +42,7 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     void onDatabaseUpdateNoChanged() {
-        makeToast("Dane są aktualne");
+        makeToast("Aktualna wersja jest najnowsza");
     }
 
     @Override
@@ -75,6 +77,14 @@ public class SettingsActivity extends BaseActivity {
                 }
             });
 
+            getPreferenceByKey(screen, "updateApp").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    AppDownloaderService.downloadApp(getActivity());
+                    return true;
+                }
+            });
+
             getPreferenceByKey(screen, "sendEmail").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -83,6 +93,14 @@ public class SettingsActivity extends BaseActivity {
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Aplikacja Busy 32-410");
                     emailIntent.putExtra(Intent.EXTRA_TEXT, "");
                     startActivity(Intent.createChooser(emailIntent, "Wyślij mail'a"));
+                    return true;
+                }
+            });
+            getPreferenceByKey(screen, "github").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/piotrjwegrzyn/Busy-32-410"));
+                    startActivity(intent);
                     return true;
                 }
             });
