@@ -18,14 +18,24 @@ import piotrjwegrzyn.busy.services.DBDownloaderService;
 public abstract class BaseActivity extends AppCompatActivity {
 
     private BroadcastReceiver dbListener, appListener;
+    private boolean isDarkTheme;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
-        if (preferences.getBoolean("darkmode", false)) {
+        preferences = getSharedPreferences("settings", MODE_PRIVATE);
+        isDarkTheme = preferences.getBoolean("darkmode", false);
+        if (isDarkTheme) {
             setTheme(R.style.DarkTheme);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (isDarkTheme != preferences.getBoolean("darkmode", false))
+            recreate();
     }
 
     public void registerAppListener() {

@@ -8,6 +8,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.Objects;
 
@@ -68,6 +69,29 @@ public class SettingsActivity extends BaseActivity {
             addPreferencesFromResource(R.xml.preferences);
 
             PreferenceScreen screen = getPreferenceScreen();
+
+            getPreferenceByKey(screen, "darkmode").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    if (newValue instanceof Boolean) {
+                        View v = getView();
+                        if (v != null)
+                            v.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        getActivity().recreate();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            }, 300);
+                    }
+                    return true;
+                }
+            });
+
 
             getPreferenceByKey(screen, "updateDB").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
