@@ -20,7 +20,8 @@ import piotrjwegrzyn.busy.database.AppDatabase;
 public class DBDownloaderService extends IntentService {
 
     public static final String ACTION_DOWNLOADER = "downloader";
-    public static final String FILE_ADRESS = "http://www.piotrjwegrzyn.droppages.com/busyAppDB.db";
+    public static final String FILE_ADDRESS = "http://www.piotrjwegrzyn.droppages.com/busyAppDB.db";
+    public static final String VERSION_ADDRESS = "http://www.piotrjwegrzyn.droppages.com/dbversion.txt";
 
     public DBDownloaderService() {
         super("DBDownloaderService");
@@ -63,7 +64,7 @@ public class DBDownloaderService extends IntentService {
     }
 
     private int getDBVersion() throws Exception {
-        URLConnection connection = new URL("http://www.piotrjwegrzyn.droppages.com/dbversion.txt").openConnection();
+        URLConnection connection = new URL(VERSION_ADDRESS).openConnection();
         int length = connection.getContentLength();
         if (length > 50)
             throw new IllegalStateException();
@@ -76,13 +77,12 @@ public class DBDownloaderService extends IntentService {
     }
 
     private void downloadDB() throws Exception {
-        URLConnection connection = new URL(FILE_ADRESS).openConnection();
+        URLConnection connection = new URL(FILE_ADDRESS).openConnection();
         int length = connection.getContentLength();
 
         AppDatabase.getInstance(this).close();
 
-        try (InputStream input = connection.getInputStream();
-             FileOutputStream output = new FileOutputStream(getDatabasePath("busyAppDB.db"))) {
+        try (InputStream input = connection.getInputStream(); FileOutputStream output = new FileOutputStream(getDatabasePath("busyAppDB.db"))) {
 
             byte[] buffer = new byte[2048];
             while (length > 0) {

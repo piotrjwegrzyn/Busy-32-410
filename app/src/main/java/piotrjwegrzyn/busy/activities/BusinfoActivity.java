@@ -36,9 +36,15 @@ public class BusinfoActivity extends BaseActivity {
         } else {
             mTextView.setText("Brak dodatkowych objaśnień");
         }
-        mail.setText("Mail: " + busInfo.mail);
-        number.setText("Nr. tel: " + busInfo.number);
-        www.setText("Strona: " + busInfo.www);
+        if (busInfo.mail != null) {
+            mail.setText("Mail: " + busInfo.mail);
+        }
+        if (busInfo.number != null) {
+            number.setText("Nr. tel: " + busInfo.number);
+        }
+        if (busInfo.www != null) {
+            www.setText("Strona: " + busInfo.www);
+        }
     }
 
     @Override

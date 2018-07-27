@@ -16,15 +16,17 @@ import java.net.URLConnection;
 public class AppDownloaderService extends IntentService {
 
     public static final String ACTION_DOWNLOADER = "appDownloader";
-    static final String VERSION_ADRESS = "http://www.piotrjwegrzyn.droppages.com/appversion.txt";
-    static final String APP_ADRESS = "http://www.piotrjwegrzyn.droppages.com/appadress.txt";
+    static final String VERSION_ADDRESS = "http://www.piotrjwegrzyn.droppages.com/appversion.txt";
+    static final String APP_ADDRESS = "http://www.piotrjwegrzyn.droppages.com/appadress.txt";
 
     public AppDownloaderService() {
         super("AppDownloaderService");
     }
 
     public static void downloadApp(Context context) {
-        context.startService(new Intent(context, AppDownloaderService.class));
+        Intent i = new Intent(context, AppDownloaderService.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startService(i);
     }
 
     @SuppressLint("ApplySharedPref")
@@ -59,7 +61,7 @@ public class AppDownloaderService extends IntentService {
     }
 
     private String getServerAppVersion() throws Exception {
-        URLConnection connection = new URL(VERSION_ADRESS).openConnection();
+        URLConnection connection = new URL(VERSION_ADDRESS).openConnection();
         int length = connection.getContentLength();
         if (length > 50)
             throw new IllegalStateException();
@@ -72,7 +74,7 @@ public class AppDownloaderService extends IntentService {
     }
 
     private void downloadNewApp() throws Exception {
-        URLConnection connection = new URL(APP_ADRESS).openConnection();
+        URLConnection connection = new URL(APP_ADDRESS).openConnection();
         int length = connection.getContentLength();
         if (length > 50)
             throw new IllegalStateException();
@@ -81,11 +83,10 @@ public class AppDownloaderService extends IntentService {
         int read = stream.read(buffer);
         stream.close();
 
-        String adress = new String(buffer, "UTF-8").trim();
+        String address = new String(buffer, "UTF-8").trim();
 
-        adress = "https://www.dropbox.com/" + adress + "/busy-32-410-piotrjwegrzyn.apk?dl=1";
-
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(adress));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dropbox.com/" + address + "/busy-32-410-piotrjwegrzyn.apk?dl=1"));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 

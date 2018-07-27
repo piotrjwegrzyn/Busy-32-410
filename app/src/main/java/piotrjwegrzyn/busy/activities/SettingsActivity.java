@@ -8,7 +8,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import java.util.Objects;
 
@@ -74,19 +73,14 @@ public class SettingsActivity extends BaseActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     if (newValue instanceof Boolean) {
-                        View v = getView();
-                        if (v != null)
-                            v.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        getActivity().recreate();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
+                        try {
+                            getActivity().startActivity(getActivity().getIntent());
+                            getActivity().finish();
 
-                                }
-                            }, 300);
+                            //getActivity().recreate();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                     return true;
                 }

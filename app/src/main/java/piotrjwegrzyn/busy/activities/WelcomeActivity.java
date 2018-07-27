@@ -46,6 +46,8 @@ public class WelcomeActivity extends BaseActivity {
         dbButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //noinspection ResultOfMethodCallIgnored
+                getDatabasePath("data").getParentFile().mkdirs();
                 dbButton.setEnabled(false);
                 dbTextView.setText("Trwa pobieranie...");
                 DBDownloaderService.downloadDatabase(WelcomeActivity.this);
