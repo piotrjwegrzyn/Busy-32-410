@@ -66,7 +66,7 @@ public class BustracksActivity extends BaseActivity {
         public void onBindViewHolder(ViewHolder holder, int position) {
             AppDao.BusTracksForList item = trackList.get(position);
             holder.busDast.setText(item.l_begin + " –> " + item.l_end);
-            holder.busShortInfo.setText(item.t_infoshort);
+            holder.busShortInfo.setText("Przez " + item.t_infoshort);
         }
 
         private void onItemClicked(int pos) {

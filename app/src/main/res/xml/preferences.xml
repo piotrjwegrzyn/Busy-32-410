@@ -19,7 +19,6 @@
     <SwitchPreference
         android:defaultValue="false"
         android:key="darkmode"
-        android:summary="Potrzebny restart do wprowadzenia zmian"
         android:title="Ciemny motyw" />
 
     <Preference
