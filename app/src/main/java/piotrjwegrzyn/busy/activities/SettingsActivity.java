@@ -109,7 +109,6 @@ public class SettingsActivity extends BaseActivity {
                     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                             "mailto", "piotrwegrzyn@protonmail.com", null));
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Aplikacja Busy 32-410");
-                    emailIntent.putExtra(Intent.EXTRA_TEXT, "");
                     startActivity(Intent.createChooser(emailIntent, "Wyślij mail'a"));
                     return true;
                 }

@@ -16,8 +16,8 @@ import java.net.URLConnection;
 public class AppDownloaderService extends IntentService {
 
     public static final String ACTION_DOWNLOADER = "appDownloader";
-    static final String VERSION_ADDRESS = "http://www.piotrjwegrzyn.droppages.com/appversion.txt";
-    static final String APP_ADDRESS = "http://www.piotrjwegrzyn.droppages.com/appadress.txt";
+    static final String VERSION_ADDRESS = "http://www.piotrjwegrzyn.droppages.com/Busy/APK/VERSION_APP.txt";
+    static final String APP_ADDRESS = "http://www.piotrjwegrzyn.droppages.com/Busy/APK/APP_ADDRESS.txt";
 
     public AppDownloaderService() {
         super("AppDownloaderService");

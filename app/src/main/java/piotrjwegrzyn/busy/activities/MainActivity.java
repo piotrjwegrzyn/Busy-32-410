@@ -3,6 +3,8 @@ package piotrjwegrzyn.busy.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,7 +21,7 @@ import piotrjwegrzyn.busy.database.AppDatabase;
 
 public class MainActivity extends BaseActivity {
 
-    public static int MINIMAL_VERSION_OF_DB = 4;
+    public static int MINIMAL_VERSION_OF_DB = 23;
 
     BusListAdapter busAdapter;
     RecyclerView mainList;
@@ -29,7 +31,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getSharedPreferences("settings", MODE_PRIVATE).getInt("dbversion", 0) == 0) {
+        if (getSharedPreferences("settings", MODE_PRIVATE).getInt("VERSION_DATABASE", 0) == 0) {
 
             Intent a = new Intent(this, WelcomeActivity.class);
             a.putExtra("title", "Pierwsze uruchomienie");
@@ -40,7 +42,7 @@ public class MainActivity extends BaseActivity {
 
             return;
         } else {
-            if (getSharedPreferences("settings", MODE_PRIVATE).getInt("dbversion", 0) < MINIMAL_VERSION_OF_DB) {
+            if (getSharedPreferences("settings", MODE_PRIVATE).getInt("VERSION_DATABASE", 0) < MINIMAL_VERSION_OF_DB) {
                 Intent a = new Intent(this, WelcomeActivity.class);
                 a.putExtra("title", "Nowa wersja aplikacji");
                 a.putExtra("text", "Witaj ponownie!\nMusimy pobrać nowe dane.\nZrób to klikając w poniższy przycisk:");
@@ -64,8 +66,11 @@ public class MainActivity extends BaseActivity {
     void onDatabaseChanged() {
         db = AppDatabase.getInstance(this);
         mainList = findViewById(R.id.mainList);
-        busAdapter = new BusListAdapter(this, db.getDao().getFirmsName());
+        busAdapter = new BusListAdapter(this, db.getDao().getCompaniesForList());
         mainList.setAdapter(busAdapter);
+        mainList.setHasFixedSize(true);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, ((LinearLayoutManager) mainList.getLayoutManager()).getOrientation());
+        mainList.addItemDecoration(dividerItemDecoration);
     }
 
 
@@ -107,17 +112,27 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             AppDao.BusInfoForList item = busList.get(position);
-            holder.busName.setText(item.name);
-            holder.busDastiny.setText(item.start + " –> " + item.stop);
+            holder.busName.setText(item.c_name);
+            holder.busDastiny.setText(item.l_begin + " –> " + item.l_end);
         }
 
         private void onItemClicked(int pos) {
             AppDao.BusInfoForList item = busList.get(pos);
 
-            Intent i = new Intent(MainActivity.this, BusplanActivity.class);
-            i.putExtra("company", item.name);
-            startActivity(i);
+            AppDatabase base = AppDatabase.getInstance(MainActivity.this);
 
+            Intent i;
+
+            if (base.getDao().countTracks(item.c_id) > 1) {
+                //to do
+                i = new Intent(MainActivity.this, BustracksActivity.class);
+                i.putExtra("company", item.c_id);
+            } else {
+                i = new Intent(MainActivity.this, BusplanActivity.class);
+                i.putExtra("track", base.getDao().selectTracksId(item.c_id)[0]);
+            }
+
+            startActivity(i);
             //Toast.makeText(MainActivity.this, ("Kliknięto " + item.name), Toast.LENGTH_SHORT).show();
         }
 

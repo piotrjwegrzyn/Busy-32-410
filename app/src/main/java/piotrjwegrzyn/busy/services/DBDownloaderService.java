@@ -20,8 +20,8 @@ import piotrjwegrzyn.busy.database.AppDatabase;
 public class DBDownloaderService extends IntentService {
 
     public static final String ACTION_DOWNLOADER = "downloader";
-    public static final String FILE_ADDRESS = "http://www.piotrjwegrzyn.droppages.com/busyAppDB.db";
-    public static final String VERSION_ADDRESS = "http://www.piotrjwegrzyn.droppages.com/dbversion.txt";
+    public static final String VERSION_ADDRESS = "http://www.piotrjwegrzyn.droppages.com/Busy/DATABASE/VERSION_DATABASE.txt";
+    public static final String FILE_ADDRESS = "http://www.piotrjwegrzyn.droppages.com/Busy/DATABASE/DATABASE_MAIN.db";
 
     public DBDownloaderService() {
         super("DBDownloaderService");
@@ -44,7 +44,7 @@ public class DBDownloaderService extends IntentService {
             SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
 
             int dbVersion = getDBVersion();
-            if ((dbVersion == preferences.getInt("dbversion", 0))) {
+            if ((dbVersion == preferences.getInt("VERSION_DATABASE", 0))) {
                 sendBackBroadcast(true, false);
                 return;
             }
@@ -53,7 +53,9 @@ public class DBDownloaderService extends IntentService {
 
             downloadDB();
 
-            preferences.edit().putInt("dbversion", dbVersion).commit();
+            preferences.edit().putInt("VERSION_DATABASE", dbVersion).commit();
+
+            Thread.sleep(500);
 
             sendBackBroadcast(true, true);
 
@@ -82,7 +84,7 @@ public class DBDownloaderService extends IntentService {
 
         AppDatabase.getInstance(this).close();
 
-        try (InputStream input = connection.getInputStream(); FileOutputStream output = new FileOutputStream(getDatabasePath("busyAppDB.db"))) {
+        try (InputStream input = connection.getInputStream(); FileOutputStream output = new FileOutputStream(getDatabasePath("DATABASE_MAIN.db"))) {
 
             byte[] buffer = new byte[2048];
             while (length > 0) {

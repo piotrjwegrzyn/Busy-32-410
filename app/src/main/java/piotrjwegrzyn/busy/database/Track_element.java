@@ -14,8 +14,8 @@ public class Track_element {
 
     int te_nr;
 
-    @ForeignKey(entity = Stop.class, parentColumns = "s_id", childColumns = "s_stop")
-    int s_stop;
+    @ForeignKey(entity = Stop.class, parentColumns = "l_id", childColumns = "l_locality")
+    int l_locality;
 
     @ForeignKey(entity = Hour.class, parentColumns = "h_id", childColumns = "h_toend")
     int h_toend;

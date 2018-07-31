@@ -3,14 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".activities.BusinfoActivity">
 
     <TextView
+        android:id="@+id/busInfoTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="Objaśnienia"
+        android:text="Informacje o trasie"
         android:textColor="@color/colorAccent"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -23,32 +25,20 @@
         tools:text="Brak dodatkowych objaśnień" />
 
     <TextView
+        android:id="@+id/busInfoBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="Informacje"
+        android:text="Informacje kontaktowe"
         android:textColor="@color/colorAccent"
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/infoMail"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/infoList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        tools:text="Mail: travelbus@XDDD.pl" />
+        android:layout_height="match_parent"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        tools:listitem="@layout/bus_info_item" />
 
-    <TextView
-        android:id="@+id/infoNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        tools:text="Nr. tel: 123456789" />
-
-    <TextView
-        android:id="@+id/infoWww"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        tools:text="WWW: travel.pl" />
 </LinearLayout>

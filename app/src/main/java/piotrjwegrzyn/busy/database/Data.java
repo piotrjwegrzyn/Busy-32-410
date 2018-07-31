@@ -4,7 +4,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(tableName = "Data")
+@Entity(tableName = "Datas")
 public class Data {
     @PrimaryKey(autoGenerate = true)
     public int d_id;
@@ -12,6 +12,7 @@ public class Data {
     @ForeignKey(entity = Company.class, parentColumns = "c_id", childColumns = "c_owner")
     int c_owner;
 
-    String d_type;
+    int dt_owner;
     String d_value;
+
 }

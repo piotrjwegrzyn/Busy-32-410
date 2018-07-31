@@ -5,42 +5,100 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
+import piotrjwegrzyn.busy.R;
+
 @Dao
 public interface AppDao {
 
+    String s1 = "SELECT Companies.c_id, Companies.c_name , L_begin.l_name AS l_begin, L_end.l_name AS l_end FROM Companies\n" +
+            "INNER JOIN Tracks ON Tracks.t_id = Companies.t_main\n" +
+            "INNER JOIN Localities AS L_begin ON L_begin.l_id = Tracks.l_begin\n" +
+            "INNER JOIN Localities AS L_end ON L_end.l_id = Tracks.l_end";
 
-    @Query("SELECT Firms.name, Firms.start, Firms.stop FROM Firms ORDER BY Firms.name")
-    List<BusInfoForList> getFirmsName();
+    String s2 = "SELECT Companies.c_name FROM Companies WHERE Companies.c_id=:c_id";
 
-    @Query("SELECT Firms.name, Firms.start, Firms.stop, Firms.week1, Firms.saturday1, Firms.sunday1, Firms.week2, Firms.saturday2, Firms.sunday2 FROM Firms WHERE Firms.name=:name LIMIT 1")
-    BusplanInfo getBusplan(String name);
+    String s3 = "SELECT dt_type, d_value, dt_action FROM Datas\n" +
+            "INNER JOIN DatasTypes On DatasTypes.dt_id = Datas.dt_owner\n" +
+            "WHERE Datas.c_owner = :c_id ORDER BY DatasTypes.dt_id";
 
-    @Query("SELECT Firms.name, Firms.info, Firms.mail, Firms.number, Firms.www FROM Firms WHERE Firms.name=:name LIMIT 1")
-    ShortBusInfo getShortBusInfo(String name);
+    String s4 = "SELECT COUNT(*) FROM Tracks WHERE Tracks.c_owner=:c_id";
 
-    public class BusInfoForList {
-        public String name;
-        public String start;
-        public String stop;
+    String s5 = "SELECT t_id FROM Tracks WHERE Tracks.c_owner=:c_id";
+
+    String s6 = "SELECT t_infolong FROM Tracks WHERE Tracks.t_id=:t_id";
+
+    String s7 = "SELECT c_owner FROM Tracks WHERE Tracks.t_id=:track_id";
+
+    String s8 = "SELECT Tracks.t_id, L_begin.l_name AS l_begin, L_end.l_name AS l_end, Tracks.t_infoshort FROM Tracks\n" +
+            "INNER JOIN Localities AS L_begin ON L_begin.l_id = Tracks.l_begin\n" +
+            "INNER JOIN Localities AS L_end ON L_end.l_id = Tracks.l_end\n" +
+            "WHERE Tracks.c_owner=:c_id";
+
+    @Query(s1)
+    List<BusInfoForList> getCompaniesForList();
+
+    @Query(s2)
+    String getBusName(int c_id);
+
+    @Query(s3)
+    List<CompanyInfo> getCompanyInformations(int c_id);
+
+    @Query(s4)
+    int countTracks(int c_id);
+
+    @Query(s5)
+    int[] selectTracksId(int c_id);
+
+    @Query(s6)
+    String getTrackLongInfo(int t_id);
+
+    @Query(s7)
+    int getCompanyId(int track_id);
+
+    @Query(s8)
+    List<BusTracksForList> getTracksForList(int c_id);
+
+    class TrackInfo {
+        public int t_id;
+        public int c_owner;
     }
 
-    public class BusplanInfo {
-        public String name;
-        public String start;
-        public String stop;
-        public String week1;
-        public String saturday1;
-        public String sunday1;
-        public String week2;
-        public String saturday2;
-        public String sunday2;
+    class BusInfoForList {
+        public int c_id;
+        public String c_name;
+        public String l_begin;
+        public String l_end;
     }
 
-    public class ShortBusInfo {
-        public String name;
-        public String info;
-        public String mail;
-        public String number;
-        public String www;
+    class CompanyInfo {
+        public final static int NO_ACTION = 0;
+        public final static int ACTION_WEB_PAGE = 1;
+        public final static int ACTION_MAIL = 2;
+        public final static int ACTION_PHONE = 3;
+        public String dt_type;
+        public String d_value;
+        public int dt_action;
+
+        public int getIconRes() {
+            switch (dt_action) {
+                case NO_ACTION:
+                    return R.drawable.ic_info_black_24dp;
+                case ACTION_WEB_PAGE:
+                    return R.drawable.ic_open_in_browser_black_24dp;
+                case ACTION_MAIL:
+                    return R.drawable.ic_mail_outline_black_24dp;
+                case ACTION_PHONE:
+                    return R.drawable.ic_phone_black_24dp;
+                default:
+                    throw new IllegalStateException("Unknown dt_action");
+            }
+        }
+    }
+
+    class BusTracksForList {
+        public int t_id;
+        public String l_begin;
+        public String l_end;
+        public String t_infoshort;
     }
 }

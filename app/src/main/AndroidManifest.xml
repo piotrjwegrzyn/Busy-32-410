@@ -38,7 +38,9 @@
 
         <service
             android:name=".services.AppDownloaderService"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <activity android:name=".activities.BustracksActivity"></activity>
     </application>
 
 </manifest>
