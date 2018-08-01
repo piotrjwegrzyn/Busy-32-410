@@ -84,6 +84,12 @@ public class BusplanActivity extends BaseActivity {
         setTitle(base.getDao().getBusName(company_id));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        hoursTextView = findViewById(R.id.hoursTextView);
+        hoursTextView.setMovementMethod(new ScrollingMovementMethod());
+        Toast.makeText(this, "Firma " + base.getDao().getBusName(company_id), Toast.LENGTH_SHORT).show();
+        navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
         te_begin_id = getIntent().getIntExtra("begin", -1);
         te_end_id = getIntent().getIntExtra("end", -1);
 
@@ -92,9 +98,10 @@ public class BusplanActivity extends BaseActivity {
         buttonEnd = findViewById(R.id.buttonEnd);
 
 
-        if (base.getDao().countTrackElements(track_id) == 2 && (te_begin_id != -1 && te_end_id != -1)) {
+        if (base.getDao().countTrackElements(track_id) == 2 && (te_begin_id == -1 && te_end_id == -1)) {
             te_begin_id = base.getDao().getStopsOnTrack(track_id).get(0).id;
             te_end_id = base.getDao().getStopsOnTrack(track_id).get(1).id;
+            updateTracks();
         }
 
         if (te_begin_id != -1 && te_end_id != -1) {
@@ -122,14 +129,6 @@ public class BusplanActivity extends BaseActivity {
             }
         });
 
-        hoursTextView = findViewById(R.id.hoursTextView);
-        hoursTextView.setMovementMethod(new ScrollingMovementMethod());
-        Toast.makeText(this, "Firma " + base.getDao().getBusName(company_id), Toast.LENGTH_SHORT).show();
-        navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-
-        //DrawableCompat.setTint(findViewById(R.id.buttonChangeDastiny).getBackground().getCurrent(), ContextCompat.getColor(this, isDarkTheme() ? R.color.white : R.color.black));
         DrawableCompat.setTint(buttonChangeDastiny.getDrawable(), ContextCompat.getColor(this, isDarkTheme() ? R.color.white : R.color.black));
     }
 
