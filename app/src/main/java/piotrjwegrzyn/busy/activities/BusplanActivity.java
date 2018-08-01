@@ -1,37 +1,74 @@
 package piotrjwegrzyn.busy.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AlertDialog;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.List;
+import java.util.Objects;
 
 import piotrjwegrzyn.busy.R;
+import piotrjwegrzyn.busy.database.AppDao;
 import piotrjwegrzyn.busy.database.AppDatabase;
 
 public class BusplanActivity extends BaseActivity {
-    int track_id, company_id;
-
-
-    /*
-        boolean defaultDestination = true;
-        String[] busTable;
-        private TextView mTextMessage;
-        private BottomNavigationView navigation;
-        private Button destination;
-        */
+    private int track_id, company_id;
+    private int te_begin_id = -1;
+    private int te_end_id = -1;
+    private Button buttonBegin;
+    private Button buttonEnd;
+    private ImageButton buttonChangeDastiny;
+    private List<AppDao.StopNameAndId> stopsOnTrack;
+    private TextView hoursTextView;
+    private BottomNavigationView navigation;
+    private String hours;
+    private AppDatabase base;
+    private AppDao.StringHours hour;
+    private final View.OnClickListener chooseStopBtnListener = new View.OnClickListener() {
+        @Override
+        public void onClick(final View view) {
+            new AlertDialog.Builder(view.getContext())
+                    .setTitle("Wybierz przystanek")
+                    .setSingleChoiceItems(
+                            new ArrayAdapter<AppDao.StopNameAndId>(view.getContext(),
+                                    android.R.layout.simple_list_item_1, stopsOnTrack), -1,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                    AppDao.StopNameAndId item = stopsOnTrack.get(i);
+                                    if (view == buttonBegin) {
+                                        buttonBegin.setText(item.name);
+                                        te_begin_id = item.id;
+                                    } else if (view == buttonEnd) {
+                                        buttonEnd.setText(item.name);
+                                        te_end_id = item.id;
+                                    } else throw new IllegalStateException();
+                                    updateTracks();
+                                }
+                            })
+                    .show();
+        }
+    };
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            /*if (defaultDestination) {
-                return navUpdater(3, item);
-            } else {
-                return navUpdater(6, item);
-            }*/
+            updateTracks(item.getItemId());
             return true;
         }
     };
@@ -42,96 +79,131 @@ public class BusplanActivity extends BaseActivity {
         setContentView(R.layout.activity_busplan);
 
         track_id = getIntent().getIntExtra("track", -1);
-        AppDatabase base = AppDatabase.getInstance(this);
+        base = AppDatabase.getInstance(this);
         company_id = base.getDao().getCompanyId(track_id);
         setTitle(base.getDao().getBusName(company_id));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        te_begin_id = getIntent().getIntExtra("begin", -1);
+        te_end_id = getIntent().getIntExtra("end", -1);
+
+        buttonBegin = findViewById(R.id.buttonBegin);
+        buttonChangeDastiny = findViewById(R.id.buttonChangeDastiny);
+        buttonEnd = findViewById(R.id.buttonEnd);
 
 
+        if (base.getDao().countTrackElements(track_id) == 2 && (te_begin_id != -1 && te_end_id != -1)) {
+            te_begin_id = base.getDao().getStopsOnTrack(track_id).get(0).id;
+            te_end_id = base.getDao().getStopsOnTrack(track_id).get(1).id;
+        }
 
-/*
-        mTextMessage = findViewById(R.id.textview);
-        destination = findViewById(R.id.destination);
-        String company = getIntent().getStringExtra("company");
+        if (te_begin_id != -1 && te_end_id != -1) {
+            buttonBegin.setText(base.getDao().getTrackElement(te_begin_id));
+            buttonEnd.setText(base.getDao().getTrackElement(te_end_id));
+        }
 
-        destination.setText("Kierunek: " + busTable[1] + " –> " + busTable[2]);
+        stopsOnTrack = AppDatabase.getInstance(this).getDao().getStopsOnTrack(track_id);
 
-        mTextMessage.setText(dbParser(busTable[3]));
+        buttonBegin.setOnClickListener(chooseStopBtnListener);
+        buttonEnd.setOnClickListener(chooseStopBtnListener);
+
+        buttonChangeDastiny.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int temp1 = te_begin_id;
+                te_begin_id = te_end_id;
+                te_end_id = temp1;
+
+                CharSequence temp2 = buttonBegin.getText();
+                buttonBegin.setText(buttonEnd.getText());
+                buttonEnd.setText(temp2);
+
+                updateTracks();
+            }
+        });
+
+        hoursTextView = findViewById(R.id.hoursTextView);
+        hoursTextView.setMovementMethod(new ScrollingMovementMethod());
+        Toast.makeText(this, "Firma " + base.getDao().getBusName(company_id), Toast.LENGTH_SHORT).show();
+        navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
 
-        mTextMessage.setMovementMethod(new ScrollingMovementMethod());
-        Toast.makeText(this, "Firma " + company, Toast.LENGTH_SHORT).show();*/
-
-
-        //navigation = findViewById(R.id.navigation);
-        //navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //DrawableCompat.setTint(findViewById(R.id.buttonChangeDastiny).getBackground().getCurrent(), ContextCompat.getColor(this, isDarkTheme() ? R.color.white : R.color.black));
+        DrawableCompat.setTint(buttonChangeDastiny.getDrawable(), ContextCompat.getColor(this, isDarkTheme() ? R.color.white : R.color.black));
     }
-/*
-
-    private String[] sqlParser(AppDao.BusplanInfo busplan) {
-        String[] metadata = {busplan.name, busplan.start, busplan.stop, busplan.week1, busplan.saturday1, busplan.sunday1, busplan.week2, busplan.saturday2, busplan.sunday2};
-        return metadata;
-    }
-*/
-
 
     private String dbParser(String text) {
         if (text == null) {
             return "Nie kursuje";
         }
 
-        String endText = "";
+        StringBuilder builder = new StringBuilder();
+
         int j = 0;
         String[] string = text.split(" ");
         for (String s : string) {
             String[] sArray = s.split("-");
 
-            endText = endText + sArray[0] + ": " + sArray[1];
+            builder.append(sArray[0]);
+            builder.append(": ");
+            builder.append(sArray[1]);
 
             if (sArray.length > 2) {
                 for (int i = 2; i < sArray.length; i++) {
-                    endText = endText + ", " + sArray[i];
+                    builder.append(", ");
+                    builder.append(sArray[i]);
                 }
             }
             j++;
             if (j < string.length) {
-                endText = endText + "\n";
+                builder.append('\n');
             }
         }
 
-        return endText;
+        return builder.toString();
     }
-/*
 
-    private void setButtonText() {
-        if (defaultDestination) {
-            destination.setText("Kierunek: " + busTable[1] + " –> " + busTable[2]);
+    private void updateTracks() {
+        updateTracks(navigation.getSelectedItemId());
+    }
+
+    private void updateTracks(int itemId) {
+        if (te_begin_id == -1 || te_end_id == -1)
+            return;
+
+        if (te_begin_id == te_end_id) {
+            hoursTextView.setText("Wybrano dwa te same przystanki");
+            return;
+        }
+        updateTextView(itemId);
+    }
+
+    private void updateTextView(int itemId) {
+        int te_begin_nr = base.getDao().getTrackElementNr(te_begin_id);
+        int te_end_nr = base.getDao().getTrackElementNr(te_end_id);
+        if (te_begin_nr < te_end_nr) {
+            hour = base.getDao().getToEndHours(te_begin_id);
         } else {
-            destination.setText("Kierunek: " + busTable[2] + " –> " + busTable[1]);
+            hour = base.getDao().getToBeginHours(te_begin_id);
         }
-    }
-*/
 
-    private boolean navUpdater(int x, MenuItem item) {
-        switch (item.getItemId()) {
+        switch (itemId) {
             case R.id.week:
-                //mTextMessage.setText(dbParser(busTable[x]));
-                return true;
+                hours = dbParser(hour.h_week);
+                break;
             case R.id.saturday:
-                //mTextMessage.setText(dbParser(busTable[x + 1]));
-                return true;
+                hours = dbParser(hour.h_saturday);
+                break;
             case R.id.sunday:
-                //mTextMessage.setText(dbParser(busTable[x + 2]));
-                return true;
+                hours = dbParser(hour.h_sunday);
+                break;
+            default:
+                hours = dbParser(hour.h_week);
+                break;
         }
-        return false;
-    }
 
-    public void buttonListener(View view) {
-        //defaultDestination = !defaultDestination;
-        //navigation.setSelectedItemId(navigation.getSelectedItemId());
-        //setButtonText();
+        hoursTextView.setText(hours);
     }
 
     @Override

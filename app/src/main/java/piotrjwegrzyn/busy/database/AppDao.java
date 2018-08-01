@@ -34,6 +34,26 @@ public interface AppDao {
             "INNER JOIN Localities AS L_end ON L_end.l_id = Tracks.l_end\n" +
             "WHERE Tracks.c_owner=:c_id";
 
+    String s9 = "SELECT Track_elements.te_id AS id, Localities.l_name AS name FROM Track_elements\n" +
+            "INNER JOIN Localities ON Localities.l_id = Track_elements.l_locality\n" +
+            "WHERE Track_elements.t_owner = :t_id ORDER BY Track_elements.te_nr";
+
+    String s10 = "select l_name from Track_elements\n" +
+            "INNER join Localities on Localities.l_id = Track_elements.l_locality\n" +
+            "Where Track_elements.te_id =:te_id";
+
+    String s11 = "SELECT COUNT(*) FROM Track_elements WHERE Track_elements.t_owner=:t_owner";
+
+    String s12 = "SELECT te_nr FROM Track_elements WHERE Track_elements.te_id =:te_id";
+
+    String s13 = "SELECT h_week, h_saturday, h_sunday FROM Hours \n" +
+            "INNER JOIN Track_elements ON Track_elements.h_toend = Hours.h_id\n" +
+            "WHERE Track_elements.te_id =:te_id";
+
+    String s14 = "SELECT h_week, h_saturday, h_sunday FROM Hours \n" +
+            "INNER JOIN Track_elements ON Track_elements.h_tobegin = Hours.h_id\n" +
+            "WHERE Track_elements.te_id =:te_id";
+
     @Query(s1)
     List<BusInfoForList> getCompaniesForList();
 
@@ -58,9 +78,38 @@ public interface AppDao {
     @Query(s8)
     List<BusTracksForList> getTracksForList(int c_id);
 
-    class TrackInfo {
-        public int t_id;
-        public int c_owner;
+    @Query(s9)
+    List<StopNameAndId> getStopsOnTrack(int t_id);
+
+    @Query(s10)
+    String getTrackElement(int te_id);
+
+    @Query(s11)
+    int countTrackElements(int t_owner);
+
+    @Query(s12)
+    int getTrackElementNr(int te_id);
+
+    @Query(s13)
+    StringHours getToEndHours(int te_id);
+
+    @Query(s14)
+    StringHours getToBeginHours(int te_id);
+
+    class StringHours {
+        public String h_week;
+        public String h_saturday;
+        public String h_sunday;
+    }
+
+    class StopNameAndId {
+        public int id;
+        public String name;
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     class BusInfoForList {

@@ -96,8 +96,7 @@ public class BusinfoActivity extends BaseActivity {
             holder.infoValue.setText(info.d_value);
             holder.infoKey.setText(info.dt_type);
             holder.infoIcon.setImageResource(info.getIconRes());
-            DrawableCompat.setTint(holder.infoIcon.getDrawable(),
-                    ContextCompat.getColor(BusinfoActivity.this, isDarkTheme() ? R.color.white : R.color.black));
+            DrawableCompat.setTint(holder.infoIcon.getDrawable(), ContextCompat.getColor(BusinfoActivity.this, isDarkTheme() ? R.color.white : R.color.black));
         }
 
         private void onViewClicked(int pos) {

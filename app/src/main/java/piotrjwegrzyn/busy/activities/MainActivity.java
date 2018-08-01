@@ -59,7 +59,9 @@ public class MainActivity extends BaseActivity {
         registerDbListener();
 
         onDatabaseChanged();
-
+        mainList.setHasFixedSize(true);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, ((LinearLayoutManager) mainList.getLayoutManager()).getOrientation());
+        mainList.addItemDecoration(dividerItemDecoration);
     }
 
     @Override
@@ -68,9 +70,6 @@ public class MainActivity extends BaseActivity {
         mainList = findViewById(R.id.mainList);
         busAdapter = new BusListAdapter(this, db.getDao().getCompaniesForList());
         mainList.setAdapter(busAdapter);
-        mainList.setHasFixedSize(true);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, ((LinearLayoutManager) mainList.getLayoutManager()).getOrientation());
-        mainList.addItemDecoration(dividerItemDecoration);
     }
 
 
@@ -131,7 +130,6 @@ public class MainActivity extends BaseActivity {
                 i = new Intent(MainActivity.this, BusplanActivity.class);
                 i.putExtra("track", base.getDao().selectTracksId(item.c_id)[0]);
             }
-
             startActivity(i);
             //Toast.makeText(MainActivity.this, ("Kliknięto " + item.name), Toast.LENGTH_SHORT).show();
         }
