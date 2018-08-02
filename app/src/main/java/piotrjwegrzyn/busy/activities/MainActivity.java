@@ -203,7 +203,7 @@ public class MainActivity extends BaseActivity {
 
             int c_id = base.getDao().getCompanyId(item.t_owner);
 
-            holder.busName.setText(base.getDao().getBusName(c_id));
+            holder.busName.setText(item.c_name);
             holder.busDestination.setText(textBuilder(base.getDao().getTrackElement(item.te_begin_id), base.getDao().getTrackElement(item.te_end_id), null, c_id));
         }
 

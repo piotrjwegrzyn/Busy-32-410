@@ -10,14 +10,16 @@ public class Favourite {
     public int t_owner;
     public int te_begin_id;
     public int te_end_id;
+    public String c_name;
 
     public Favourite() {
 
     }
 
-    public void setValues(int t, int b, int e) {
+    public void setValues(int t, int b, int e, String n) {
         this.t_owner = t;
         this.te_begin_id = b;
         this.te_end_id = e;
+        this.c_name = n;
     }
 }

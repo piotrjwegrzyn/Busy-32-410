@@ -13,7 +13,7 @@ public interface AppFavouritesDao {
 
     String f1 = "SELECT COUNT(*) FROM Favourites";
 
-    String f2 = "SELECT * FROM Favourites";
+    String f2 = "SELECT * FROM Favourites ORDER BY Favourites.c_name";
 
     String f4 = "DELETE FROM Favourites WHERE Favourites.t_owner = :t_owner AND Favourites.te_begin_id = :te_begin_id AND Favourites.te_end_id = :te_end_id";
 
@@ -41,6 +41,7 @@ public interface AppFavouritesDao {
         public int t_owner;
         public int te_begin_id;
         public int te_end_id;
+        public String c_name;
     }
 
 }

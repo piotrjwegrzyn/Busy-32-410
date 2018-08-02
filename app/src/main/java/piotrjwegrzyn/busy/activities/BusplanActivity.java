@@ -63,6 +63,7 @@ public class BusplanActivity extends BaseActivity {
                                         te_end_id = item.id;
                                     } else throw new IllegalStateException();
                                     updateTracks();
+                                    updateIcon();
                                 }
                             })
                     .show();
@@ -235,7 +236,7 @@ public class BusplanActivity extends BaseActivity {
                         fav.getDao().deleteFavourite(track_id, te_end_id, te_begin_id);
                     } else {
                         Favourite f = new Favourite();
-                        f.setValues(track_id, te_begin_id, te_end_id);
+                        f.setValues(track_id, te_begin_id, te_end_id, base.getDao().getBusName(company_id));
                         fav.getDao().putFavourite(f);
                     }
                 }
