@@ -44,6 +44,7 @@ public class DBDownloaderService extends IntentService {
             SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
 
             int dbVersion = getDBVersion();
+
             if ((dbVersion == preferences.getInt("VERSION_DATABASE", 0))) {
                 sendBackBroadcast(true, false);
                 return;

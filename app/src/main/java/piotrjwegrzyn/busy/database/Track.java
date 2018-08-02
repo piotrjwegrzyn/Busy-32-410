@@ -20,5 +20,6 @@ public class Track {
 
     String t_infoshort;
     String t_infolong;
+    String t_name;
 
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Aktualizacje" />
+    <PreferenceCategory android:title="Aplikacja" />
 
     <Preference
         android:key="updateDB"
@@ -14,18 +14,11 @@
         android:summary="Sprawdź aktualizacie aplikacji"
         android:title="Uaktualnij aplikację" />
 
-    <PreferenceCategory android:title="Inne" />
-
     <SwitchPreference
         android:defaultValue="false"
         android:key="darkmode"
         android:title="Ciemny motyw" />
 
-    <Preference
-        android:enabled="false"
-        android:key="favourites"
-        android:summary="Zarządzaj ulubionymi trasami"
-        android:title="Ulubione" />
 
     <PreferenceCategory android:title="Dodatkowe informacje" />
 

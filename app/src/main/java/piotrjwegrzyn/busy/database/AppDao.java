@@ -10,10 +10,10 @@ import piotrjwegrzyn.busy.R;
 @Dao
 public interface AppDao {
 
-    String s1 = "SELECT Companies.c_id, Companies.c_name , L_begin.l_name AS l_begin, L_end.l_name AS l_end FROM Companies\n" +
+    String s1 = "SELECT Companies.c_id, Companies.c_name , L_begin.l_name AS l_begin, L_end.l_name AS l_end, Tracks.t_infoshort AS l_by FROM Companies\n" +
             "INNER JOIN Tracks ON Tracks.t_id = Companies.t_main\n" +
             "INNER JOIN Localities AS L_begin ON L_begin.l_id = Tracks.l_begin\n" +
-            "INNER JOIN Localities AS L_end ON L_end.l_id = Tracks.l_end";
+            "INNER JOIN Localities AS L_end ON L_end.l_id = Tracks.l_end ORDER BY Companies.c_name";
 
     String s2 = "SELECT Companies.c_name FROM Companies WHERE Companies.c_id=:c_id";
 
@@ -53,6 +53,8 @@ public interface AppDao {
     String s14 = "SELECT h_week, h_saturday, h_sunday FROM Hours \n" +
             "INNER JOIN Track_elements ON Track_elements.h_tobegin = Hours.h_id\n" +
             "WHERE Track_elements.te_id =:te_id";
+
+    String s15 = "SELECT Tracks.t_name FROM Tracks INNER JOIN Companies ON Tracks.c_owner = Companies.c_id WHERE Companies.c_id = :c_owner";
 
     @Query(s1)
     List<BusInfoForList> getCompaniesForList();
@@ -96,6 +98,9 @@ public interface AppDao {
     @Query(s14)
     StringHours getToBeginHours(int te_id);
 
+    @Query(s15)
+    String[] getTracksNames(int c_owner);
+
     class StringHours {
         public String h_week;
         public String h_saturday;
@@ -117,6 +122,7 @@ public interface AppDao {
         public String c_name;
         public String l_begin;
         public String l_end;
+        public String l_by;
     }
 
     class CompanyInfo {
