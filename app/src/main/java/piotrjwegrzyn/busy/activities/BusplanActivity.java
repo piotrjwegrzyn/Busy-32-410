@@ -40,6 +40,7 @@ public class BusplanActivity extends BaseActivity {
     private AppDatabase base;
     private AppDao.StringHours hour;
     private AppFavouritesDatabase fav;
+    MenuItem item2;
 
     private final View.OnClickListener chooseStopBtnListener = new View.OnClickListener() {
         @Override
@@ -212,32 +213,33 @@ public class BusplanActivity extends BaseActivity {
         hoursTextView.setText(hours);
     }
 
-    void updateIcon(MenuItem item) {
-        if (fav.getDao().checkIfInTable(track_id, te_begin_id, te_end_id) > 0) {
-            item.setIcon(R.drawable.ic_favorite);
+    void updateIcon() {
+        if (fav.getDao().checkIfInTable(track_id, te_begin_id, te_end_id) > 0 || fav.getDao().checkIfInTable(track_id, te_end_id, te_begin_id) > 0) {
+            item2.setIcon(R.drawable.ic_favorite);
         } else {
-            item.setIcon(R.drawable.ic_favorite_border);
+            item2.setIcon(R.drawable.ic_favorite_border);
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item2 = menu.add(101, 101, 1, "Zapisz");
-        updateIcon(item2);
+        item2 = menu.add(101, 101, 1, "Zapisz");
+        updateIcon();
         item2.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (te_begin_id != 0 && te_end_id != 0) {
-                    if (fav.getDao().checkIfInTable(track_id, te_begin_id, te_end_id) != 0) {
+                    if (fav.getDao().checkIfInTable(track_id, te_begin_id, te_end_id) != 0 || fav.getDao().checkIfInTable(track_id, te_end_id, te_begin_id) != 0) {
                         fav.getDao().deleteFavourite(track_id, te_begin_id, te_end_id);
+                        fav.getDao().deleteFavourite(track_id, te_end_id, te_begin_id);
                     } else {
                         Favourite f = new Favourite();
                         f.setValues(track_id, te_begin_id, te_end_id);
                         fav.getDao().putFavourite(f);
                     }
                 }
-                updateIcon(item);
+                updateIcon();
                 return true;
             }
         });
