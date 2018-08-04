@@ -7,11 +7,14 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Objects;
 
 import piotrjwegrzyn.busy.R;
 import piotrjwegrzyn.busy.database.AppDao;
@@ -22,24 +25,54 @@ public class BustracksActivity extends BaseActivity {
     TrackListAdapter trackAdapter;
     RecyclerView trackList;
     AppDatabase base;
+    int company_id;
+    String title = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bustracks);
 
-        int c_owner = getIntent().getIntExtra("company", 0);
+        company_id = getIntent().getIntExtra("company", 0);
         base = AppDatabase.getInstance(this);
 
-        setTitle(base.getDao().getBusName(c_owner) + " - wybór trasy");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle(base.getDao().getBusName(company_id) + " - wybór trasy");
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         trackList = findViewById(R.id.trackList);
-        trackAdapter = new TrackListAdapter(this, base.getDao().getTracksForList(c_owner));
+        trackAdapter = new TrackListAdapter(this, base.getDao().getTracksForList(company_id));
         trackList.setAdapter(trackAdapter);
         trackList.setHasFixedSize(true);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, ((LinearLayoutManager) trackList.getLayoutManager()).getOrientation());
         trackList.addItemDecoration(dividerItemDecoration);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem item = menu.add(100, 100, 1, "Informacje");
+        item.setIcon(R.drawable.ic_info);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent h = new Intent(BustracksActivity.this, BusinfoActivity.class);
+                h.putExtra("company", company_id);
+                startActivity(h);
+                return true;
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.ViewHolder> {
@@ -65,7 +98,10 @@ public class BustracksActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             AppDao.BusTracksForList item = trackList.get(position);
-            holder.busDast.setText(item.l_begin + " –> " + item.l_end);
+            if (item.t_name != null) {
+                title = item.t_name + ", ";
+            }
+            holder.busDast.setText(title + item.l_begin + " –> " + item.l_end);
             holder.busShortInfo.setText("Przez " + item.t_infoshort);
         }
 

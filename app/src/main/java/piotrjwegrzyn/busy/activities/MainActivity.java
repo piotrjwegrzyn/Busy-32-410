@@ -30,6 +30,7 @@ public class MainActivity extends BaseActivity {
     RecyclerView mainList, favList;
     AppDatabase base;
     AppFavouritesDatabase fav;
+    TextView textViewAll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         registerDbListener();
+        registerFavListener();
 
         base = AppDatabase.getInstance(this);
         fav = AppFavouritesDatabase.getInstance(this);
@@ -80,15 +82,20 @@ public class MainActivity extends BaseActivity {
     @Override
     void onDatabaseChanged() {
         busAdapter = new BusListAdapter(this, base.getDao().getCompaniesForList());
-        favAdapter = new FavouritesListAdapter(this, fav.getDao().getFavourites());
         mainList.setAdapter(busAdapter);
-        favList.setAdapter(favAdapter);
+        showFavourites();
+    }
 
-        if (fav.getDao().countFavourites() == 0) {
+    @Override
+    void showFavourites() {
+        favAdapter = new FavouritesListAdapter(this, fav.getDao().getFavourites());
+        favList.setAdapter(favAdapter);
+        if (favAdapter.getItemCount() == 0) {
             findViewById(R.id.busListFavourites).setVisibility(View.GONE);
+            findViewById(R.id.busListAll).setVisibility(View.GONE);
         } else {
             findViewById(R.id.busListFavourites).setVisibility(View.VISIBLE);
-
+            findViewById(R.id.busListAll).setVisibility(View.VISIBLE);
         }
     }
 

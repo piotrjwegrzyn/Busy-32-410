@@ -18,7 +18,7 @@ import piotrjwegrzyn.busy.services.DBDownloaderService;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private BroadcastReceiver dbListener, appListener;
+    private BroadcastReceiver dbListener, appListener, favListener;
     private boolean mIsDarkTheme;
     private SharedPreferences preferences;
 
@@ -44,6 +44,24 @@ public abstract class BaseActivity extends AppCompatActivity {
             mIsDarkTheme = !mIsDarkTheme;
             recreate();
         }
+    }
+
+    public void registerFavListener() {
+
+        if (favListener != null) {
+            return;
+        }
+
+        favListener = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getBooleanExtra("fav", false)) {
+                    showFavourites();
+                }
+            }
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(favListener, new IntentFilter("fav"));
     }
 
     public void registerAppListener() {
@@ -108,6 +126,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public void unregisterFavListener() {
+        if (favListener != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(favListener);
+            favListener = null;
+        }
+    }
+
     public void makeToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
@@ -128,10 +153,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    void showFavourites() {
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterDbListener();
         unregisterAppListener();
+        unregisterFavListener();
     }
 }

@@ -29,10 +29,10 @@ public interface AppDao {
 
     String s7 = "SELECT c_owner FROM Tracks WHERE Tracks.t_id=:track_id";
 
-    String s8 = "SELECT Tracks.t_id, L_begin.l_name AS l_begin, L_end.l_name AS l_end, Tracks.t_infoshort FROM Tracks\n" +
-            "INNER JOIN Localities AS L_begin ON L_begin.l_id = Tracks.l_begin\n" +
-            "INNER JOIN Localities AS L_end ON L_end.l_id = Tracks.l_end\n" +
-            "WHERE Tracks.c_owner=:c_id";
+    String s8 = "SELECT Tracks.t_id, L_begin.l_name AS l_begin, L_end.l_name AS l_end, Tracks.t_infoshort, Tracks.t_name FROM Tracks \n" +
+            "INNER JOIN Localities AS L_begin ON L_begin.l_id = Tracks.l_begin \n" +
+            "INNER JOIN Localities AS L_end ON L_end.l_id = Tracks.l_end \n" +
+            "WHERE Tracks.c_owner=:c_id ORDER BY Tracks.t_name, l_begin, l_end, Tracks.t_infoshort";
 
     String s9 = "SELECT Track_elements.te_id AS id, Localities.l_name AS name FROM Track_elements\n" +
             "INNER JOIN Localities ON Localities.l_id = Track_elements.l_locality\n" +
@@ -54,7 +54,7 @@ public interface AppDao {
             "INNER JOIN Track_elements ON Track_elements.h_tobegin = Hours.h_id\n" +
             "WHERE Track_elements.te_id =:te_id";
 
-    String s15 = "SELECT Tracks.t_name FROM Tracks INNER JOIN Companies ON Tracks.c_owner = Companies.c_id WHERE Companies.c_id = :c_owner";
+    String s15 = "SELECT Tracks.t_name FROM Tracks WHERE Tracks.t_id = :t_id";
 
     @Query(s1)
     List<BusInfoForList> getCompaniesForList();
@@ -99,7 +99,7 @@ public interface AppDao {
     StringHours getToBeginHours(int te_id);
 
     @Query(s15)
-    String[] getTracksNames(int c_owner);
+    String getTrackName(int t_id);
 
     class StringHours {
         public String h_week;
@@ -155,5 +155,6 @@ public interface AppDao {
         public String l_begin;
         public String l_end;
         public String t_infoshort;
+        public String t_name;
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.method.ScrollingMovementMethod;
@@ -41,6 +42,7 @@ public class BusplanActivity extends BaseActivity {
     private AppDao.StringHours hour;
     private AppFavouritesDatabase fav;
     MenuItem item2;
+    String title = "";
 
     private final View.OnClickListener chooseStopBtnListener = new View.OnClickListener() {
         @Override
@@ -84,10 +86,21 @@ public class BusplanActivity extends BaseActivity {
         setContentView(R.layout.activity_busplan);
 
         track_id = getIntent().getIntExtra("track", -1);
+
         base = AppDatabase.getInstance(this);
         fav = AppFavouritesDatabase.getInstance(this);
         company_id = base.getDao().getCompanyId(track_id);
-        setTitle(base.getDao().getBusName(company_id));
+
+        title = base.getDao().getTrackName(track_id);
+
+        if (title != null) {
+            title = title + ", ";
+        } else {
+            title = "";
+        }
+
+        setTitle(title + base.getDao().getBusName(company_id));
+
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         hoursTextView = findViewById(R.id.hoursTextView);
@@ -222,6 +235,13 @@ public class BusplanActivity extends BaseActivity {
         }
     }
 
+    private void sendFavBroadcast() {
+        Intent i = new Intent();
+        i.setAction("fav");
+        i.putExtra("fav", true);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         item2 = menu.add(101, 101, 1, "Zapisz");
@@ -234,11 +254,14 @@ public class BusplanActivity extends BaseActivity {
                     if (fav.getDao().checkIfInTable(track_id, te_begin_id, te_end_id) != 0 || fav.getDao().checkIfInTable(track_id, te_end_id, te_begin_id) != 0) {
                         fav.getDao().deleteFavourite(track_id, te_begin_id, te_end_id);
                         fav.getDao().deleteFavourite(track_id, te_end_id, te_begin_id);
+                        makeToast("Usunięto z zapisnych");
                     } else {
                         Favourite f = new Favourite();
-                        f.setValues(track_id, te_begin_id, te_end_id, base.getDao().getBusName(company_id));
+                        f.setValues(track_id, te_begin_id, te_end_id, title + base.getDao().getBusName(company_id));
                         fav.getDao().putFavourite(f);
+                        makeToast("Dodano do zapisanych");
                     }
+                    sendFavBroadcast();
                 }
                 updateIcon();
                 return true;

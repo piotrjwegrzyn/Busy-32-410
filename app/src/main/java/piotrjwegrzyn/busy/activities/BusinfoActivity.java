@@ -22,6 +22,8 @@ import piotrjwegrzyn.busy.database.AppDatabase;
 
 public class BusinfoActivity extends BaseActivity {
 
+    String title;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +47,12 @@ public class BusinfoActivity extends BaseActivity {
             }
             x.setText(t);
         }
+        title = base.getDao().getTrackName(t_id);
+        if (title == null) {
+            title = base.getDao().getBusName(c_id);
+        }
+        setTitle(title + " - Informacje");
 
-        setTitle(base.getDao().getBusName(c_id) + " - Informacje");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         List<AppDao.CompanyInfo> informations = base.getDao().getCompanyInformations(c_id);
