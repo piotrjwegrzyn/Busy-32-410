@@ -92,10 +92,8 @@ public class MainActivity extends BaseActivity {
         favList.setAdapter(favAdapter);
         if (favAdapter.getItemCount() == 0) {
             findViewById(R.id.busListFavourites).setVisibility(View.GONE);
-            findViewById(R.id.busListAll).setVisibility(View.GONE);
         } else {
             findViewById(R.id.busListFavourites).setVisibility(View.VISIBLE);
-            findViewById(R.id.busListAll).setVisibility(View.VISIBLE);
         }
     }
 

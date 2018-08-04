@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +24,7 @@ import piotrjwegrzyn.busy.database.AppDatabase;
 
 public class BusinfoActivity extends BaseActivity {
 
+    RecyclerView infoList;
     String title;
 
     @Override
@@ -35,30 +38,35 @@ public class BusinfoActivity extends BaseActivity {
 
         AppDatabase base = AppDatabase.getInstance(this);
 
-        if (t_id == 0) {
-            findViewById(R.id.busInfoTop).setVisibility(View.GONE);
-            findViewById(R.id.infoTextViewCompany).setVisibility(View.GONE);
-            findViewById(R.id.busInfoBottom).setVisibility(View.GONE);
-        } else {
+        if (t_id != 0) {
             TextView x = findViewById(R.id.infoTextViewCompany);
             String t = base.getDao().getTrackLongInfo(t_id);
             if (t == null) {
                 t = "Brak dodatkowych informacji dotyczących trasy";
             }
             x.setText(t);
+        } else {
+            findViewById(R.id.busInfoTop).setVisibility(View.GONE);
+            findViewById(R.id.infoTextViewCompany).setVisibility(View.GONE);
+            findViewById(R.id.busInfoBottom).setVisibility(View.GONE);
         }
+
         title = base.getDao().getTrackName(t_id);
         if (title == null) {
             title = base.getDao().getBusName(c_id);
         }
+
         setTitle(title + " - Informacje");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         List<AppDao.CompanyInfo> informations = base.getDao().getCompanyInformations(c_id);
 
-        RecyclerView infoList = findViewById(R.id.infoList);
+        infoList = findViewById(R.id.infoList);
         infoList.setAdapter(new InfoAdapter(informations));
+        infoList.setHasFixedSize(true);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, ((LinearLayoutManager) infoList.getLayoutManager()).getOrientation());
+        infoList.addItemDecoration(dividerItemDecoration);
     }
 
     @Override
